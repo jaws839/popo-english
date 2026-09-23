@@ -792,15 +792,20 @@ if(DB.current && me()){go("learn")} else {renderPick();show("pick");document.get
   console.assert(makeOpts(UNITS[0].lessons[0].words,0).includes(UNITS[0].lessons[0].words[0][1]),"opts include answer");
 })();
 </script>
-<!-- ===== GitHub Pages 전용: Kokoro-82M 신경망 TTS (정통 영국 RP 발음) =====
-     Piper보다 훨씬 자연스러운 오픈소스 모델. transformers.js로 브라우저에서 100% 로컬 구동.
-     Claude 아트팩트(CSP)에서는 동작 불가, GitHub Pages 등 일반 호스팅에서만 작동.
-     첫 실행 시 모델(~80MB)을 받아 캐시 → 이후 오프라인. -->
+<!-- ===== 발음 3단계: ①성우급 mp3(있으면) → ②Kokoro 신경망 → ③시스템 음성 =====
+     audio/manifest.json 에 등재된 문장은 미리 합성한 성우급 영국 RP mp3를 재생.
+     아직 없으면 Kokoro(브라우저 신경망), 그것도 실패하면 기기 시스템 음성. -->
 <script type="module">
   import { KokoroTTS } from 'https://cdn.jsdelivr.net/npm/kokoro-js/+esm';
 
+  // 성우급 미리 합성 오디오 (generate-audio.mjs 로 생성)
+  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  let PREBAKED = new Set();
+  fetch('audio/manifest.json').then(r => r.ok ? r.json() : []).then(a => { PREBAKED = new Set(a); }).catch(() => {});
+
+  // Kokoro (2순위)
   const MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX';
-  const VOICE = 'bf_emma';   // 영국 여성 RP(최고 등급). 대안: 'bm_george'(정통 영국 남성)
+  const VOICE = 'bf_emma';   // 영국 여성 RP / 대안 bm_george
   let tts = null, loading = false, failed = false;
   const audio = new Audio();
 
@@ -813,31 +818,40 @@ if(DB.current && me()){go("learn")} else {renderPick();show("pick");document.get
       document.body.appendChild(b); }
     b.textContent=msg;
   }
-  async function ensure(){
+  async function ensureKokoro(){
     if(tts || loading || failed) return;
-    loading = true; banner('영국 원어민 발음 준비 중… (첫 실행만, 잠시)');
-    try{
-      tts = await KokoroTTS.from_pretrained(MODEL, { dtype:'q8', device:'wasm' });
-      banner('');
-    }catch(e){ failed = true; banner(''); console.warn('Kokoro load failed, fallback to system voice', e); }
+    loading = true; banner('영국 발음 준비 중… (첫 실행만, 잠시)');
+    try{ tts = await KokoroTTS.from_pretrained(MODEL, { dtype:'q8', device:'wasm' }); banner(''); }
+    catch(e){ failed = true; banner(''); console.warn('Kokoro load failed', e); }
     loading = false;
   }
 
-  // 앱이 쓰는 speak()를 Kokoro 버전으로 교체 (준비 전/실패 시 시스템 음성으로 폴백)
+  async function playFile(src){
+    try{ audio.pause(); }catch(e){}
+    audio.src = src; await audio.play();
+  }
+
   window.speak = async function(text){
-    ensure();
-    if(!tts){ sys(text); return; }
-    try{
-      const a = await tts.generate(text, { voice: VOICE });
-      const blob = a.toBlob();
-      try{ audio.pause(); }catch(e){}
-      audio.src = URL.createObjectURL(blob);
-      await audio.play();
-    }catch(e){ sys(text); }
+    // ① 성우급 mp3
+    const sl = slug(text);
+    if(PREBAKED.has(sl)){
+      try{ await playFile('audio/' + sl + '.mp3'); return; }catch(e){}
+    }
+    // ② Kokoro 신경망
+    ensureKokoro();
+    if(tts){
+      try{
+        const a = await tts.generate(text, { voice: VOICE });
+        try{ audio.pause(); }catch(e){}
+        audio.src = URL.createObjectURL(a.toBlob()); await audio.play(); return;
+      }catch(e){}
+    }
+    // ③ 시스템 음성
+    sys(text);
   };
 
-  // 첫 상호작용 때 모델 미리 받기
-  window.addEventListener('pointerdown', ensure, { once:true });
+  // Kokoro는 성우 mp3가 없을 때만 필요 → 미리 받되, prebaked가 다 있으면 굳이 안 받음
+  window.addEventListener('pointerdown', () => { if(PREBAKED.size < 50) ensureKokoro(); }, { once:true });
 </script>
 </body>
 </html>
