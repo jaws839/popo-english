@@ -789,51 +789,52 @@ if(DB.current && me()){go("learn")} else {renderPick();show("pick");document.get
   console.assert(makeOpts(UNITS[0].lessons[0].words,0).includes(UNITS[0].lessons[0].words[0][1]),"opts include answer");
 })();
 </script>
-<!-- ===== GitHub Pages 전용: Piper 신경망 TTS로 영국 원어민(RP) 발음 =====
-     Claude 아트팩트 안에서는 보안(CSP)으로 동작하지 않고, GitHub Pages 등 일반 호스팅에서만 작동합니다.
-     첫 실행 시 영국 음성 모델(수십 MB)을 내려받아 브라우저에 캐시합니다(이후 오프라인 동작). -->
+<!-- ===== GitHub Pages 전용: Kokoro-82M 신경망 TTS (정통 영국 RP 발음) =====
+     Piper보다 훨씬 자연스러운 오픈소스 모델. transformers.js로 브라우저에서 100% 로컬 구동.
+     Claude 아트팩트(CSP)에서는 동작 불가, GitHub Pages 등 일반 호스팅에서만 작동.
+     첫 실행 시 모델(~80MB)을 받아 캐시 → 이후 오프라인. -->
 <script type="module">
-  import * as tts from 'https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web/+esm';
+  import { KokoroTTS } from 'https://cdn.jsdelivr.net/npm/kokoro-js/+esm';
 
-  const PRIMARY = 'en_GB-cori-high';     // 영국 여성, 또렷 (키즈 적합)
-  const FALLBACK = 'en_GB-alan-medium';  // 영국 남성 RP (대안)
-  let VOICE = PRIMARY, ready = false, tried = false;
+  const MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX';
+  const VOICE = 'bf_emma';   // 영국 여성 RP(최고 등급). 대안: 'bm_george'(정통 영국 남성)
+  let tts = null, loading = false, failed = false;
   const audio = new Audio();
 
-  function sysSpeak(text){
-    try{ const u=new SpeechSynthesisUtterance(text); u.lang='en-GB'; u.rate=.9; speechSynthesis.speak(u); }catch(e){}
-  }
-  async function prepare(){
-    if(tried) return; tried = true;
-    banner('영국 발음 준비 중… (첫 실행만 잠시)');
-    for(const v of [PRIMARY, FALLBACK]){
-      try{ await tts.download(v, ()=>{}); VOICE=v; ready=true; break; }catch(e){}
-    }
-    banner(ready ? '' : '');
-  }
+  function sys(t){ try{ const u=new SpeechSynthesisUtterance(t); u.lang='en-GB'; u.rate=.9; speechSynthesis.speak(u); }catch(e){} }
   function banner(msg){
     let b=document.getElementById('__ttsbar');
     if(!msg){ if(b)b.remove(); return; }
     if(!b){ b=document.createElement('div'); b.id='__ttsbar';
-      b.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:99;background:#2E2740;color:#fff;font:13px system-ui;padding:7px 14px;border-radius:999px;opacity:.92';
+      b.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:99;background:#2E2740;color:#fff;font:13px system-ui;padding:7px 14px;border-radius:999px;opacity:.92;max-width:90%;text-align:center';
       document.body.appendChild(b); }
     b.textContent=msg;
   }
-
-  // 앱이 쓰는 speak()를 Piper 버전으로 교체 (준비 전엔 시스템 음성으로 임시 재생)
-  window.speak = async function(text){
-    prepare();
-    if(!ready){ sysSpeak(text); return; }
+  async function ensure(){
+    if(tts || loading || failed) return;
+    loading = true; banner('영국 원어민 발음 준비 중… (첫 실행만, 잠시)');
     try{
-      const wav = await tts.predict({ text, voiceId: VOICE });
+      tts = await KokoroTTS.from_pretrained(MODEL, { dtype:'q8', device:'wasm' });
+      banner('');
+    }catch(e){ failed = true; banner(''); console.warn('Kokoro load failed, fallback to system voice', e); }
+    loading = false;
+  }
+
+  // 앱이 쓰는 speak()를 Kokoro 버전으로 교체 (준비 전/실패 시 시스템 음성으로 폴백)
+  window.speak = async function(text){
+    ensure();
+    if(!tts){ sys(text); return; }
+    try{
+      const a = await tts.generate(text, { voice: VOICE });
+      const blob = a.toBlob();
       try{ audio.pause(); }catch(e){}
-      audio.src = URL.createObjectURL(wav);
+      audio.src = URL.createObjectURL(blob);
       await audio.play();
-    }catch(e){ sysSpeak(text); }
+    }catch(e){ sys(text); }
   };
 
-  // 첫 사용자 상호작용 때 모델 미리 받기 시작
-  window.addEventListener('pointerdown', prepare, { once:true });
+  // 첫 상호작용 때 모델 미리 받기
+  window.addEventListener('pointerdown', ensure, { once:true });
 </script>
 </body>
 </html>
