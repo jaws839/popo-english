@@ -1,0 +1,11 @@
+{
+  "name": "포포 잉글리시",
+  "short_name": "포포",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#FFF7EE",
+  "theme_color": "#1FB89B",
+  "icons": [
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

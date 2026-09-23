@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1FB89B">
+<title>포포 잉글리시</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="포포 잉글리시">
+<style>
+  :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+  html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#FFF7EE}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>포포 잉글리시</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+  :root{
+    --coral:#FF7A59; --coral-dk:#E5623F;
+    --teal:#1FB89B; --teal-dk:#149077;
+    --sun:#FFC93C; --sun-dk:#E8A800;
+    --grape:#7C6BEE;
+    --ink:#2E2740; --ink-soft:#6A6379;
+    --cream:#FFF7EE; --card:#FFFFFF; --line:#F0E7DA;
+    --ok:#2FB37E; --bad:#F0554E;
+    --shadow:0 6px 0 rgba(46,39,64,.10);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F3EFF8; --ink-soft:#B7AFC7;
+      --cream:#1B1726; --card:#272134; --line:#372F49;
+      --shadow:0 6px 0 rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F3EFF8; --ink-soft:#B7AFC7;
+    --cream:#1B1726; --card:#272134; --line:#372F49;
+    --shadow:0 6px 0 rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font-family:"Noto Sans KR",system-ui,sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #app{max-width:460px; margin:0 auto; min-height:100%; display:flex; flex-direction:column; position:relative}
+
+  .screen{flex:1; padding:16px 16px 96px; display:none; animation:fade .25s ease}
+  .screen.on{display:block}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)}to{opacity:1;transform:none}}
+  h1,h2,h3{font-family:"Jua",sans-serif; font-weight:400; margin:0; text-wrap:balance}
+  .en{font-family:"Fredoka",sans-serif}
+
+  /* top bar */
+  .topbar{display:flex; align-items:center; gap:10px; padding:10px 4px 14px}
+  .stat{display:flex; align-items:center; gap:5px; font-family:"Fredoka"; font-weight:600; font-size:16px}
+  .stat.heart{color:var(--coral)} .stat.xp{color:var(--sun-dk)} .stat.streak{color:var(--teal)}
+  .stat svg{width:22px;height:22px}
+  .spacer{flex:1}
+  .whoami{display:flex;align-items:center;gap:7px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:3px 10px 3px 4px;font-family:"Jua";font-size:14px;cursor:pointer}
+  .avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:16px;color:#fff}
+
+  /* buttons */
+  .btn{font-family:"Jua"; font-size:18px; border:none; border-radius:16px; padding:14px; width:100%;
+    color:#fff; background:var(--teal); box-shadow:0 5px 0 var(--teal-dk); cursor:pointer; transition:.08s}
+  .btn:active{transform:translateY(4px); box-shadow:0 1px 0 var(--teal-dk)}
+  .btn.coral{background:var(--coral); box-shadow:0 5px 0 var(--coral-dk)}
+  .btn.ghost{background:var(--card); color:var(--ink-soft); box-shadow:0 5px 0 var(--line)}
+  .btn:disabled{opacity:.45; box-shadow:none; transform:none; cursor:default}
+
+  /* mascot */
+  .mascot{display:block; margin:0 auto}
+  .bubble{background:var(--card); border:2px solid var(--line); border-radius:18px; padding:12px 16px;
+    font-family:"Jua"; text-align:center; position:relative; box-shadow:var(--shadow); margin:12px 6px 0}
+
+  /* level path */
+  .unit-head{display:flex; align-items:center; gap:10px; margin:22px 4px 4px}
+  .unit-head .tag{font-family:"Fredoka";font-weight:700;font-size:11px;letter-spacing:.08em;color:#fff;background:var(--grape);padding:3px 9px;border-radius:999px}
+  .unit-head h2{font-size:20px}
+  .unit-sub{color:var(--ink-soft); font-size:13px; margin:2px 4px 10px}
+  .path{position:relative; padding:6px 0}
+  .node{width:74px; height:74px; border-radius:50%; border:none; cursor:pointer; display:grid; place-items:center;
+    font-size:30px; color:#fff; box-shadow:0 6px 0 rgba(0,0,0,.18); position:relative; transition:.08s}
+  .node:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .node.done{background:var(--sun); box-shadow:0 6px 0 var(--sun-dk)}
+  .node.open{background:var(--teal); box-shadow:0 6px 0 var(--teal-dk)}
+  .node.lock{background:#CFC7D6; box-shadow:0 6px 0 #B4AAC0; cursor:default}
+  .node .stars{position:absolute; bottom:-9px; left:50%; transform:translateX(-50%); font-size:12px; white-space:nowrap; filter:drop-shadow(0 1px 0 rgba(0,0,0,.15))}
+  .row{display:flex; justify-content:center; margin:14px 0}
+
+  /* lesson */
+  .lesson-top{display:flex; align-items:center; gap:12px; margin:2px 0 18px}
+  .x{font-family:"Fredoka"; font-size:26px; color:var(--ink-soft); background:none; border:none; cursor:pointer; line-height:1}
+  .progress{flex:1; height:16px; background:var(--line); border-radius:999px; overflow:hidden}
+  .progress > i{display:block; height:100%; background:var(--teal); border-radius:999px; transition:width .3s}
+  .q-kind{font-family:"Jua"; color:var(--ink-soft); font-size:15px; margin:6px 2px 14px}
+  .wordcard{background:var(--card); border:2px solid var(--line); border-radius:22px; padding:26px 16px; text-align:center; box-shadow:var(--shadow)}
+  .wordcard .emoji{font-size:64px; line-height:1}
+  .wordcard .word{font-family:"Fredoka"; font-weight:600; font-size:40px; margin-top:8px; color:var(--ink)}
+  .wordcard .ko{color:var(--ink-soft); margin-top:2px; font-size:16px}
+  .say{margin:14px auto 0; width:auto; display:inline-flex; align-items:center; gap:8px; padding:10px 20px;
+    font-family:"Jua"; font-size:16px; color:var(--teal-dk); background:var(--card); border:2px solid var(--teal); border-radius:999px; cursor:pointer}
+  .say:active{transform:scale(.96)}
+  .center{text-align:center}
+  .choices{display:grid; gap:12px; margin-top:20px}
+  .choice{font-family:"Jua"; font-size:19px; text-align:left; background:var(--card); border:2px solid var(--line);
+    border-radius:16px; padding:16px 18px; cursor:pointer; box-shadow:0 4px 0 var(--line); transition:.08s}
+  .choice:active{transform:translateY(3px); box-shadow:0 1px 0 var(--line)}
+  .choice.pick{border-color:var(--teal); background:color-mix(in srgb,var(--teal) 12%,var(--card))}
+  .choice.right{border-color:var(--ok); background:color-mix(in srgb,var(--ok) 16%,var(--card)); box-shadow:0 4px 0 var(--ok)}
+  .choice.wrong{border-color:var(--bad); background:color-mix(in srgb,var(--bad) 14%,var(--card)); box-shadow:0 4px 0 var(--bad)}
+  .typebox{width:100%; font-family:"Fredoka"; font-size:26px; text-align:center; padding:16px; margin-top:18px;
+    border:2px solid var(--line); border-radius:16px; background:var(--card); color:var(--ink)}
+  .typebox:focus{outline:none; border-color:var(--teal)}
+  .hint{font-family:"Fredoka"; letter-spacing:.35em; color:var(--ink-soft); text-align:center; font-size:22px; margin-top:12px}
+
+  /* result footer */
+  .footbar{position:fixed; left:0; right:0; bottom:0; max-width:460px; margin:0 auto; padding:14px 16px;
+    padding-bottom:calc(14px + env(safe-area-inset-bottom,0px)); background:var(--card); border-top:2px solid var(--line)}
+  .footbar.ok{background:color-mix(in srgb,var(--ok) 16%,var(--card))}
+  .footbar.no{background:color-mix(in srgb,var(--bad) 14%,var(--card))}
+  .footmsg{font-family:"Jua"; font-size:17px; margin-bottom:10px; display:flex; align-items:center; gap:8px}
+  .footmsg.ok{color:var(--ok)} .footmsg.no{color:var(--bad)}
+
+  /* video list */
+  .vid{display:flex; align-items:center; gap:12px; background:var(--card); border:2px solid var(--line);
+    border-radius:16px; padding:12px; margin-bottom:10px; text-decoration:none; color:var(--ink); box-shadow:var(--shadow)}
+  .vid .thumb{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-size:26px;background:var(--sun);flex:none}
+  .vid b{font-family:"Jua";font-weight:400;font-size:16px;display:block}
+  .vid span{font-size:12px;color:var(--ink-soft)}
+  .vid .go{margin-left:auto;color:var(--coral);font-family:"Fredoka";font-weight:600}
+
+  /* ranking */
+  .rank{display:flex; align-items:center; gap:12px; background:var(--card); border:2px solid var(--line);
+    border-radius:18px; padding:14px; margin-bottom:12px; box-shadow:var(--shadow)}
+  .rank .medal{font-size:26px; width:34px; text-align:center; flex:none}
+  .rank .nm{font-family:"Jua"; font-size:18px}
+  .rank .meta{font-size:12px; color:var(--ink-soft); font-family:"Fredoka"}
+  .rank .pts{margin-left:auto; font-family:"Fredoka"; font-weight:700; font-size:20px; color:var(--sun-dk)}
+  .rank.me{border-color:var(--teal)}
+  .bar{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:6px}
+  .bar>i{display:block;height:100%;background:var(--teal);border-radius:999px}
+
+  /* profile pick / cards */
+  .pcard{display:flex; align-items:center; gap:14px; background:var(--card); border:2px solid var(--line);
+    border-radius:18px; padding:16px; margin-bottom:12px; cursor:pointer; box-shadow:var(--shadow); width:100%; text-align:left; font:inherit; color:inherit}
+  .pcard.sel{border-color:var(--teal)}
+  .pcard .avatar{width:48px;height:48px;font-size:24px}
+  .pcard b{font-family:"Jua";font-weight:400;font-size:19px;display:block}
+  .pcard span{font-size:13px;color:var(--ink-soft);font-family:"Fredoka"}
+
+  /* bottom nav */
+  nav{position:fixed; left:0; right:0; bottom:0; max-width:460px; margin:0 auto; display:flex;
+    background:var(--card); border-top:2px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom,0px)}
+  nav button{flex:1; background:none; border:none; padding:10px 0 12px; cursor:pointer; color:var(--ink-soft); font-family:"Jua"; font-size:12px}
+  nav button svg{display:block; margin:0 auto 3px; width:26px; height:26px}
+  nav button.on{color:var(--teal)}
+  .overlay{position:fixed; inset:0; background:rgba(20,15,30,.5); display:none; place-items:center; padding:20px; z-index:50}
+  .overlay.on{display:grid}
+  .modal{background:var(--card); border-radius:22px; padding:22px; width:100%; max-width:340px; box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .modal h3{font-size:22px; text-align:center; margin-bottom:6px}
+  .modal p{text-align:center; color:var(--ink-soft); font-size:14px; margin:0 0 16px}
+  label.fld{display:block; font-family:"Jua"; font-size:14px; margin:12px 0 6px}
+  .fld input{width:100%; padding:12px; border:2px solid var(--line); border-radius:12px; background:var(--cream); color:var(--ink); font:inherit; font-size:16px}
+  .emojipick{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+  .emojipick button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--cream);font-size:22px;cursor:pointer}
+  .emojipick button.sel{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 14%,var(--card))}
+  .big-center{min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px}
+  .confetti{font-size:56px}
+  .muted{color:var(--ink-soft);font-size:13px;text-align:center;margin-top:18px}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important; transition:none!important}}
+</style>
+
+<div id="app">
+  <!-- PROFILE PICK -->
+  <section id="s-pick" class="screen">
+    <div class="center" style="margin-top:20px">
+      <div id="pickMascot"></div>
+      <h1 style="font-size:30px;margin-top:6px">포포 잉글리시</h1>
+      <p class="unit-sub" style="text-align:center">누가 공부할까요?</p>
+    </div>
+    <div id="pickList" style="margin-top:16px"></div>
+    <button class="btn ghost" id="addKid">+ 새 친구 추가</button>
+  </section>
+
+  <!-- LEARN -->
+  <section id="s-learn" class="screen">
+    <div class="topbar">
+      <div class="stat heart" title="하트"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3 1.2 4 2.4 1-1.2 2-2.4 4-2.4 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21z"/></svg><span id="tHeart">5</span></div>
+      <div class="stat streak" title="연속학습"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-1 4-1 6 0 1.5 1 2.5 1 2.5S14 9 14 7c2 1.5 4 4 4 7a6 6 0 11-12 0c0-3 2-6 6-12z"/></svg><span id="tStreak">0</span></div>
+      <div class="stat xp" title="포인트"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg><span id="tXp">0</span></div>
+      <div class="spacer"></div>
+      <button class="whoami" id="whoBtn"><span class="avatar" id="whoAv">🦊</span><span id="whoNm">친구</span></button>
+    </div>
+    <div id="path"></div>
+    <p class="muted">단계를 순서대로 열며 자유 회화까지 나아가요 🌱</p>
+  </section>
+
+  <!-- LESSON -->
+  <section id="s-lesson" class="screen">
+    <div class="lesson-top">
+      <button class="x" id="quitLesson">✕</button>
+      <div class="progress"><i id="lprog" style="width:0"></i></div>
+      <div class="stat heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3 1.2 4 2.4 1-1.2 2-2.4 4-2.4 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21z"/></svg><span id="lHeart">5</span></div>
+    </div>
+    <div id="qbody"></div>
+  </section>
+
+  <!-- VIDEO -->
+  <section id="s-video" class="screen">
+    <h1 style="font-size:26px;margin:6px 4px 2px">영상으로 보기 🎬 🇬🇧</h1>
+    <p class="unit-sub">영국식 키즈 영어 콘텐츠예요. 고른 영상 하나만 재생돼요 — 추천영상·검색은 뜨지 않아요 🔒</p>
+    <div id="vidList"></div>
+    <p class="muted">부모님이 미리 골라둔 안전한 학습 영상이에요. 다 보면 이 앱으로 돌아오세요.</p>
+  </section>
+
+  <!-- RANKING -->
+  <section id="s-rank" class="screen">
+    <h1 style="font-size:26px;margin:6px 4px 2px">우리들 랭킹 🏆</h1>
+    <p class="unit-sub">누가 제일 열심히 했을까? 매일 도전해요!</p>
+    <div id="rankList"></div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="s-me" class="screen">
+    <h1 style="font-size:26px;margin:6px 4px 2px">내 정보 🦊</h1>
+    <div id="meBody"></div>
+    <button class="btn ghost" id="switchKid" style="margin-top:14px">친구 바꾸기</button>
+    <p class="muted">🇬🇧 이 앱은 영국식 영어(발음·표현·스펠링)로 학습해요.<br>아이폰 사파리 → 공유 → "홈 화면에 추가"로 앱처럼 쓸 수 있어요.</p>
+  </section>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <button data-go="learn" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>학습</button>
+    <button data-go="video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>영상</button>
+    <button data-go="rank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M6 4h12v5a6 6 0 01-12 0z"/><path d="M6 6H3v2a3 3 0 003 3M18 6h3v2a3 3 0 01-3 3"/></svg>랭킹</button>
+    <button data-go="me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>내정보</button>
+  </nav>
+</div>
+
+<!-- lesson footer injected -->
+<div id="foot"></div>
+
+<!-- modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="mTitle">새 친구</h3>
+    <p id="mDesc">이름과 캐릭터를 골라요</p>
+    <label class="fld">이름<input id="mName" maxlength="8" placeholder="예: 지민"></label>
+    <label class="fld">학년 (선택)<input id="mGrade" maxlength="12" placeholder="예: 4학년"></label>
+    <label class="fld">캐릭터</label>
+    <div class="emojipick" id="mEmoji"></div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn ghost" id="mCancel" style="flex:1">취소</button>
+      <button class="btn" id="mSave" style="flex:1">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Mascot (original fox "Popo") ---------- */
+function mascot(size){return `<svg class="mascot" width="${size}" height="${size}" viewBox="0 0 120 120" aria-label="포포">
+  <ellipse cx="60" cy="108" rx="30" ry="7" fill="rgba(0,0,0,.08)"/>
+  <path d="M28 40C22 22 30 14 30 14l16 12z" fill="#FF7A59"/>
+  <path d="M92 40C98 22 90 14 90 14L74 26z" fill="#FF7A59"/>
+  <path d="M32 24l10 8-9 6z" fill="#FFC93C"/>
+  <path d="M88 24l-10 8 9 6z" fill="#FFC93C"/>
+  <circle cx="60" cy="60" r="34" fill="#FF9270"/>
+  <path d="M60 30a34 34 0 0132 22c-8 8-20 12-32 12s-24-4-32-12a34 34 0 0132-22z" fill="#FF7A59"/>
+  <ellipse cx="60" cy="70" rx="22" ry="18" fill="#FFF3EA"/>
+  <circle cx="49" cy="58" r="5.5" fill="#2E2740"/>
+  <circle cx="71" cy="58" r="5.5" fill="#2E2740"/>
+  <circle cx="50.5" cy="56.5" r="1.8" fill="#fff"/>
+  <circle cx="72.5" cy="56.5" r="1.8" fill="#fff"/>
+  <path d="M60 66l-4 5h8z" fill="#2E2740"/>
+  <path d="M56 74q4 4 8 0" stroke="#2E2740" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <circle cx="41" cy="68" r="4" fill="#FFB39B"/>
+  <circle cx="79" cy="68" r="4" fill="#FFB39B"/>
+</svg>`}
+
+/* ---------- Curriculum ---------- */
+const UNITS = [
+  {tag:"LV.1", name:"안녕! 첫 인사", sub:"처음 만나는 영어 인사말", color:"var(--coral)",
+   lessons:[
+     {title:"인사하기", words:[["hi","안녕","👋"],["hello","안녕하세요","🙌"],["bye","잘 가","👋"],["good morning","좋은 아침","🌅"],["good night","잘 자","🌙"]]},
+     {title:"기분·예절", words:[["yes","응/네","✅"],["no","아니","❌"],["thanks","고마워","🙏"],["sorry","미안해","😔"],["please","부탁해요","🥺"]]},
+     {title:"반가워", words:[["name","이름","🏷️"],["me","나","🙋"],["you","너","👉"],["friend","친구","👫"],["nice","반가워","💛"]]},
+   ]},
+  {tag:"LV.2", name:"동물 친구들", sub:"귀여운 동물 이름 배우기", color:"var(--teal)",
+   lessons:[
+     {title:"집 동물", words:[["cat","고양이","🐱"],["dog","강아지","🐶"],["fish","물고기","🐟"],["bird","새","🐦"],["rabbit","토끼","🐰"]]},
+     {title:"큰 동물", words:[["lion","사자","🦁"],["bear","곰","🐻"],["tiger","호랑이","🐯"],["elephant","코끼리","🐘"],["monkey","원숭이","🐵"]]},
+     {title:"바다 동물", words:[["whale","고래","🐳"],["shark","상어","🦈"],["turtle","거북이","🐢"],["crab","게","🦀"],["octopus","문어","🐙"]]},
+   ]},
+  {tag:"LV.3", name:"색깔과 숫자", sub:"세상을 색과 숫자로", color:"var(--sun-dk)",
+   lessons:[
+     {title:"색깔", words:[["red","빨강","🔴"],["blue","파랑","🔵"],["green","초록","🟢"],["yellow","노랑","🟡"],["black","검정","⚫"]]},
+     {title:"색깔 더", words:[["white","하양","⚪"],["pink","분홍","🌸"],["purple","보라","🟣"],["orange","주황","🟠"],["brown","갈색","🟤"]]},
+     {title:"숫자 1-5", words:[["one","하나","1️⃣"],["two","둘","2️⃣"],["three","셋","3️⃣"],["four","넷","4️⃣"],["five","다섯","5️⃣"]]},
+     {title:"숫자 6-10", words:[["six","여섯","6️⃣"],["seven","일곱","7️⃣"],["eight","여덟","8️⃣"],["nine","아홉","9️⃣"],["ten","열","🔟"]]},
+   ]},
+  {tag:"LV.4", name:"음식·가족·몸", sub:"매일 쓰는 단어들", color:"var(--grape)",
+   lessons:[
+     {title:"음식", words:[["apple","사과","🍎"],["milk","우유","🥛"],["bread","빵","🍞"],["rice","밥","🍚"],["water","물","💧"]]},
+     {title:"음식 더", words:[["egg","계란","🥚"],["meat","고기","🍖"],["soup","국","🍲"],["sweets","사탕","🍬"],["juice","주스","🧃"]]},
+     {title:"가족", words:[["mum","엄마","👩"],["dad","아빠","👨"],["baby","아기","👶"],["sister","언니/누나","👧"],["brother","형/오빠","👦"]]},
+     {title:"몸", words:[["hand","손","✋"],["eye","눈","👁️"],["ear","귀","👂"],["nose","코","👃"],["mouth","입","👄"]]},
+   ]},
+  {tag:"LV.5", name:"우리 집·물건", sub:"주변 사물 이름", color:"var(--coral)",
+   lessons:[
+     {title:"집 안", words:[["door","문","🚪"],["window","창문","🪟"],["bed","침대","🛏️"],["chair","의자","🪑"],["table","탁자","🍽️"]]},
+     {title:"물건", words:[["book","책","📖"],["pen","펜","🖊️"],["bag","가방","🎒"],["clock","시계","🕐"],["phone","전화기","📱"]]},
+     {title:"옷", words:[["hat","모자","🧢"],["shoes","신발","👟"],["shirt","셔츠","👕"],["socks","양말","🧦"],["coat","외투","🧥"]]},
+   ]},
+  {tag:"LV.6", name:"움직임", sub:"동작을 나타내는 말 (동사)", color:"var(--teal)",
+   lessons:[
+     {title:"기본 동작", words:[["go","가다","🚶"],["come","오다","👋"],["run","달리다","🏃"],["stop","멈추다","✋"],["sit","앉다","🪑"]]},
+     {title:"일상 동작", words:[["eat","먹다","🍽️"],["drink","마시다","🥤"],["sleep","자다","😴"],["read","읽다","📖"],["play","놀다","🎈"]]},
+     {title:"동작 더", words:[["look","보다","👀"],["listen","듣다","👂"],["write","쓰다","✏️"],["open","열다","🔓"],["close","닫다","🔒"]]},
+   ]},
+  {tag:"LV.7", name:"어떤 모양?", sub:"모양·느낌을 꾸미는 말 (형용사)", color:"var(--sun-dk)",
+   lessons:[
+     {title:"크기·상태", words:[["big","큰","🐘"],["small","작은","🐜"],["hot","뜨거운","🔥"],["cold","차가운","❄️"],["new","새로운","✨"]]},
+     {title:"느낌", words:[["fast","빠른","⚡"],["slow","느린","🐌"],["happy","행복한","😊"],["angry","화난","😠"],["tired","피곤한","😫"]]},
+     {title:"평가", words:[["good","좋은","👍"],["bad","나쁜","👎"],["long","긴","📏"],["short","짧은","✂️"],["cute","귀여운","🥰"]]},
+   ]},
+  {tag:"LV.8", name:"시간·날씨", sub:"언제? 날씨는 어때?", color:"var(--grape)",
+   lessons:[
+     {title:"요일·때", words:[["Monday","월요일","📅"],["Tuesday","화요일","📅"],["Sunday","일요일","📅"],["today","오늘","☀️"],["tomorrow","내일","🌅"]]},
+     {title:"날씨", words:[["sunny","맑은","☀️"],["rainy","비 오는","🌧️"],["snowy","눈 오는","❄️"],["windy","바람 부는","🌬️"],["cloudy","흐린","☁️"]]},
+     {title:"하루", words:[["morning","아침","🌅"],["afternoon","오후","🌤️"],["night","밤","🌙"],["now","지금","⏰"],["later","나중에","⏳"]]},
+   ]},
+  {tag:"LV.9", name:"어디로?", sub:"장소·교통·방향", color:"var(--coral)",
+   lessons:[
+     {title:"장소", words:[["home","집","🏠"],["school","학교","🏫"],["park","공원","🌳"],["shop","가게","🏪"],["hospital","병원","🏥"]]},
+     {title:"교통", words:[["car","자동차","🚗"],["bus","버스","🚌"],["bike","자전거","🚲"],["train","기차","🚆"],["plane","비행기","✈️"]]},
+     {title:"방향", words:[["up","위","⬆️"],["down","아래","⬇️"],["left","왼쪽","⬅️"],["right","오른쪽","➡️"],["here","여기","📍"]]},
+   ]},
+  {tag:"LV.10", name:"학교와 하루", sub:"짧은 문장으로 말해요", color:"var(--teal)",
+   lessons:[
+     {title:"교실 문장", words:[["Sit down","앉으세요","🪑"],["Stand up","일어나세요","🧍"],["Be quiet","조용히 해요","🤫"],["Good job","잘했어요","👏"],["Try again","다시 해봐요","🔁"]]},
+     {title:"하루 문장", words:[["I go to school","나는 학교에 가","🏫"],["I am hungry","나는 배고파","🍽️"],["I am sleepy","나는 졸려","😴"],["Let's eat","먹자","🍚"],["Wash your hands","손 씻어","🧼"]]},
+     {title:"부탁 문장", words:[["Help me","도와줘","🆘"],["Wait a minute","잠깐만","⏳"],["Follow me","따라와","👣"],["Show me","보여줘","👀"],["Listen to me","내 말 들어봐","👂"]]},
+   ]},
+  {tag:"LV.11", name:"물어보기", sub:"질문하고 대답하기", color:"var(--sun-dk)",
+   lessons:[
+     {title:"질문 단어", words:[["What","무엇","❓"],["Where","어디","📍"],["Who","누구","🧑"],["When","언제","⏰"],["Why","왜","🤔"]]},
+     {title:"질문 문장", words:[["What is this?","이게 뭐야?","❓"],["Where are you?","어디 있어?","📍"],["Who is he?","그는 누구야?","🧑"],["How are you?","잘 지내?","🙂"],["How old are you?","몇 살이야?","🎂"]]},
+     {title:"대답 문장", words:[["This is a book","이건 책이야","📖"],["I am here","나 여기 있어","📍"],["He is my friend","그는 내 친구야","👫"],["I am fine","난 괜찮아","👍"],["I am ten","나는 열 살이야","🔟"]]},
+   ]},
+  {tag:"LV.12", name:"나를 소개해요", sub:"자기소개와 좋아하는 것", color:"var(--grape)",
+   lessons:[
+     {title:"자기소개", words:[["My name is Popo","내 이름은 포포야","🦊"],["I am a student","나는 학생이야","🎒"],["I am from Korea","나는 한국에서 왔어","🇰🇷"],["Nice to meet you","만나서 반가워","🤝"],["I am nine years old","나는 아홉 살이야","🎂"]]},
+     {title:"좋아하는 것", words:[["I like pizza","나는 피자를 좋아해","🍕"],["I don't like spiders","나는 거미가 싫어","🕷️"],["My favourite colour is blue","내가 좋아하는 색은 파랑이야","🔵"],["I have a dog","나는 강아지가 있어","🐶"],["I can swim","나는 수영할 수 있어","🏊"]]},
+     {title:"가족 소개", words:[["This is my mom","이분은 우리 엄마야","👩"],["I have a sister","나는 여동생이 있어","👧"],["We are a family","우리는 가족이야","👨‍👩‍👧"],["I love my family","나는 우리 가족을 사랑해","💕"],["We live together","우리는 함께 살아","🏠"]]},
+   ]},
+  {tag:"LV.13", name:"집에서 대화", sub:"하루 동안 나누는 말", color:"var(--coral)",
+   lessons:[
+     {title:"아침", words:[["Good morning!","좋은 아침!","🌅"],["I woke up","나 일어났어","🛏️"],["Let's have breakfast","아침 먹자","🍳"],["Where is my bag?","내 가방 어디 있어?","🎒"],["I'm ready","준비됐어","✅"]]},
+     {title:"저녁", words:[["I'm home","다녀왔습니다","🏠"],["How was your day?","오늘 어땠어?","🙂"],["It was fun","재밌었어","😄"],["I'm tired","피곤해","😫"],["Good night","잘 자","🌙"]]},
+     {title:"놀이", words:[["Let's play together","같이 놀자","🎈"],["It's my turn","내 차례야","✋"],["That's not fair","그건 불공평해","😤"],["You win","네가 이겼어","🏆"],["Let's do it again","다시 하자","🔁"]]},
+   ]},
+  {tag:"LV.14", name:"밖에서 대화", sub:"가게·식당·길에서", color:"var(--teal)",
+   lessons:[
+     {title:"가게에서", words:[["How much is it?","얼마예요?","💰"],["I'd like this one","이거 주세요","👉"],["Here you are","여기 있어요","🤲"],["Thank you very much","정말 감사합니다","🙏"],["Have a lovely day","좋은 하루 보내세요","😊"]]},
+     {title:"식당에서", words:[["I'm hungry","배고파요","🍽️"],["Can I have some water?","물 좀 주세요","💧"],["This is delicious","맛있어요","😋"],["I'm full","배불러요","🤤"],["Can I have the bill, please?","계산해 주세요","🧾"]]},
+     {title:"길에서", words:[["Excuse me","실례합니다","🙋"],["Where is the toilet?","화장실이 어디예요?","🚻"],["Go straight on","쭉 가세요","⬆️"],["Turn left","왼쪽으로 도세요","⬅️"],["It's over there","저기예요","👉"]]},
+   ]},
+  {tag:"LV.15", name:"자유롭게 이야기해요", sub:"생각·계획을 말하는 자유 회화", color:"var(--sun-dk)",
+   lessons:[
+     {title:"생각 말하기", words:[["I think so","나도 그렇게 생각해","💭"],["I don't think so","난 그렇게 생각 안 해","🙅"],["That's a good idea","좋은 생각이야","💡"],["Let me think","생각해 볼게","🤔"],["I'm not sure","잘 모르겠어","😕"]]},
+     {title:"계획·미래", words:[["What are you doing?","뭐 하고 있어?","🤷"],["I'm going to study","나 공부할 거야","📚"],["Let's meet tomorrow","내일 만나자","📅"],["I can't wait","너무 기대돼","🤩"],["See you soon","곧 보자","👋"]]},
+     {title:"이야기하기", words:[["Guess what!","있잖아!","😲"],["That's amazing","정말 멋지다","🤩"],["I have a question","질문 있어요","🙋"],["Can you help me?","도와줄 수 있어?","🤝"],["We did it!","우리가 해냈어!","🎉"]]},
+   ]},
+];
+
+// 새 탭에서 '단일 영상 플레이어'로만 열려 다른 영상 목록/검색이 뜨지 않음 (youtube-nocookie 임베드)
+function vidUrl(id){return `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1&autoplay=1`}
+// 영국식(British English) 키즈 영어 교육 콘텐츠
+const VIDEOS = [
+  {lv:"LV1", t:"인사 배우기 Welcome!", s:"Steve and Maggie (UK)", e:"👋", id:"H-g0Q6zGeF0"},
+  {lv:"LV1", t:"Mr Sun 노래", s:"Steve and Maggie (UK)", e:"☀️", id:"jLg2O3l1FxI"},
+  {lv:"LV1", t:"알파벳 A-Z 파닉스", s:"Alphablocks (CBeebies)", e:"🔤", id:"BScgKbbxObk"},
+  {lv:"LV2", t:"동물원에 가요 (동물)", s:"British Council", e:"🐾", id:"SSpKVUahz0I"},
+  {lv:"LV3", t:"색깔의 세상 (colours)", s:"British Council", e:"🎨", id:"lxfaVWsHQEM"},
+  {lv:"LV3", t:"숫자 1-10 세기", s:"Numberblocks (CBeebies)", e:"🔢", id:"mu4-OvYjMWo"},
+  {lv:"LV3", t:"열까지 세어요 Count to Ten", s:"Numberblocks (CBeebies)", e:"🔟", id:"k4i6fu0bTQ8"},
+  {lv:"LV5", t:"바지를 머리에 쓰지 마요 (옷)", s:"British Council", e:"👖", id:"MF5pbroiSoA"},
+  {lv:"LV10", t:"조용히 해주세요 (교실 표현)", s:"British Council", e:"🤫", id:"W8TziPyIHdM"},
+  {lv:"LV13", t:"학교 이야기 회화", s:"Steve and Maggie (UK)", e:"💬", id:"F9OdB53UGmA"},
+];
+
+const EMOJIS=["🦊","🐱","🐶","🐰","🐻","🦁","🐯","🐸","🐧","🦄","🐼","🐵"];
+// 잉글리시에그·브레인나우 오마주: 레슨을 끝내면 '알'이 부화해 아기 친구를 모아요 (보물 도감)
+const PETS=["🐣","🐥","🐰","🐱","🐶","🦊","🐼","🐨","🐸","🐧","🦄","🐯","🐮","🐷","🐙","🦉","🐢","🐝","🦋","🐬"];
+const COLORS=["var(--coral)","var(--teal)","var(--grape)","var(--sun-dk)"];
+const MAX_HEART=5;
+const totalLessons = UNITS.reduce((a,u)=>a+u.lessons.length,0);
+
+/* ---------- Storage ---------- */
+function load(){try{return JSON.parse(localStorage.getItem("popo")||"null")}catch(e){return null}}
+function save(){try{localStorage.setItem("popo",JSON.stringify(DB))}catch(e){}}
+let DB = load() || {kids:[], current:null};
+if(!DB.kids.length){
+  DB.kids=[
+    {id:"k1",name:"큰 아이",grade:"4학년",emoji:"🦊",xp:0,hearts:MAX_HEART,heartsDay:today(),streak:0,last:null,done:{}},
+    {id:"k2",name:"작은 아이",grade:"1학년",emoji:"🐻",xp:0,hearts:MAX_HEART,heartsDay:today(),streak:0,last:null,done:{}},
+  ];
+  DB.current="k1"; save();
+}
+function today(){return new Date().toISOString().slice(0,10)}
+function me(){return DB.kids.find(k=>k.id===DB.current)}
+
+/* ---------- Screen switching ---------- */
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));document.getElementById("s-"+id).classList.add("on");window.scrollTo(0,0)}
+function go(tab){
+  show(tab);
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===tab));
+  document.getElementById("nav").hidden=false;
+  if(tab==="learn")renderPath();
+  if(tab==="rank")renderRank();
+  if(tab==="me")renderMe();
+  if(tab==="video")renderVideos();
+}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* ---------- Speech ---------- */
+/* 정통 브리티시 RP 발음: 기기에 설치된 영국 음성 중 가장 자연스러운 것을 점수화해 선택 */
+let VOICES=[];
+function scoreVoice(v){
+  const n=(v.name||"").toLowerCase(), l=(v.lang||"").toLowerCase();
+  let s=0;
+  if(l.replace("_","-").startsWith("en-gb")) s+=120; else if(l.startsWith("en")) s+=10;
+  if(/google uk english/.test(n)) s+=70;          // 크롬/안드로이드 신경망 (매우 자연스러움)
+  if(/siri/.test(n)) s+=65;                         // iOS Siri 영국 음성
+  if(/enhanced|premium|neural|natural/.test(n)) s+=55; // 향상/프리미엄 다운로드 음성
+  if(/\b(daniel|kate|serena|sonia|arthur|martha|jamie|oliver|stephanie|libby|ryan)\b/.test(n)) s+=25;
+  if(/female|woman/.test(n)) s+=4;                  // 키즈 학습엔 여성 음성이 또렷
+  if(/compact|eloquence|espeak|reed|rocko|shelley|grandma|grandpa|whisper|novelty/.test(n)) s-=60; // 저품질/장난 음성 제외
+  return s;
+}
+function loadVoices(){
+  try{ VOICES=(speechSynthesis.getVoices()||[]).filter(v=>/^en/i.test(v.lang)).sort((a,b)=>scoreVoice(b)-scoreVoice(a)); }
+  catch(e){ VOICES=[]; }
+}
+try{ loadVoices(); speechSynthesis.onvoiceschanged=()=>{loadVoices(); if(typeof renderMe==="function" && document.getElementById("s-me")&&document.getElementById("s-me").classList.contains("on"))renderMe();}; }catch(e){}
+function currentVoice(){
+  if(!VOICES.length)loadVoices();
+  if(DB.voice){ const v=VOICES.find(v=>v.name===DB.voice); if(v)return v; }
+  return VOICES[0]||null;
+}
+function speak(text){
+  try{
+    speechSynthesis.cancel();
+    const v=currentVoice();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang = v? v.lang : "en-GB";
+    u.rate=.9; u.pitch=1.0;   // RP 특유의 또렷하고 차분한 톤
+    if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- Daily heart refill + streak ---------- */
+function dailyTick(k){
+  if(k.heartsDay!==today()){k.hearts=MAX_HEART;k.heartsDay=today();}
+}
+
+/* ---------- Top bar ---------- */
+function refreshTop(){
+  const k=me();dailyTick(k);
+  tHeart.textContent=k.hearts; tXp.textContent=k.xp; tStreak.textContent=k.streak;
+  whoAv.textContent=k.emoji; whoAv.style.background=COLORS[DB.kids.indexOf(k)%COLORS.length]; whoNm.textContent=k.name;
+  save();
+}
+
+/* ---------- Level path ---------- */
+function lessonKey(u,l){return u+"-"+l}
+function unitUnlocked(ui){
+  if(ui===0)return true;
+  const prev=UNITS[ui-1];
+  return prev.lessons.every((_,li)=>me().done[lessonKey(ui-1,li)]);
+}
+function renderPath(){
+  refreshTop();
+  const k=me(); k.pets=k.pets||[];
+  const missionDone = k.last===today();
+  let html=`<div style="display:flex;align-items:center;gap:12px;background:${missionDone?'color-mix(in srgb,var(--ok) 14%,var(--card))':'var(--card)'};border:2px solid ${missionDone?'var(--ok)':'var(--line)'};border-radius:18px;padding:14px;box-shadow:var(--shadow);margin:6px 2px 4px">
+    <span style="font-size:30px">${missionDone?'✅':'🥚'}</span>
+    <span style="flex:1"><b style="font-family:Jua;font-size:16px">오늘의 미션</b>
+      <div style="font-size:13px;color:var(--ink-soft)">${missionDone?'완료! 알을 하나 받았어요 🎉':'레슨 1개를 끝내고 알을 받아요!'}</div></span>
+    <span style="font-family:Fredoka;font-weight:700;color:var(--sun-dk)">🥚 ${k.pets.length}</span>
+  </div>`;
+  UNITS.forEach((u,ui)=>{
+    const uOpen=unitUnlocked(ui);
+    html+=`<div class="unit-head"><span class="tag" style="background:${u.color}">${u.tag}</span><h2>${u.name}</h2></div><p class="unit-sub">${u.sub}</p><div class="path">`;
+    u.lessons.forEach((les,li)=>{
+      const key=lessonKey(ui,li);
+      const stars=k.done[key]||0;
+      // unlocked if unit open AND (first lesson OR previous lesson done)
+      const prevDone = li===0 ? true : !!k.done[lessonKey(ui,li-1)];
+      const open = uOpen && prevDone;
+      let cls = stars? "done" : open? "open":"lock";
+      const icon = stars? "⭐" : open? "▶" : "🔒";
+      const off = li%2===0? 0 : (li%4===1? 70 : -70);
+      html+=`<div class="row"><button class="node ${cls}" ${open?"":"disabled"} data-u="${ui}" data-l="${li}" style="transform:translateX(${off}px)">
+        ${les.titleIcon||icon}
+        ${stars?`<span class="stars">${"⭐".repeat(stars)}</span>`:""}
+      </button></div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById("path").innerHTML=html;
+  document.querySelectorAll(".node.open,.node.done").forEach(n=>{
+    n.onclick=()=>startLesson(+n.dataset.u,+n.dataset.l);
+  });
+}
+
+/* ---------- Lesson engine ---------- */
+let L=null; // active lesson state
+function startLesson(ui,li){
+  const k=me();dailyTick(k);
+  if(k.hearts<=0){alert("하트가 다 떨어졌어요! 내일 다시 가득 채워져요 💛");return}
+  const words=UNITS[ui].lessons[li].words;
+  // build question queue: each word -> read card, then a quiz (listen-choice or write)
+  const qs=[];
+  words.forEach((w,i)=>{
+    qs.push({kind:"read", w});
+    qs.push(Math.random()<.5 && w[0].split(" ").length===1
+      ? {kind:"write", w}
+      : {kind:"listen", w, opts:makeOpts(words,i)});
+  });
+  L={ui,li,words,qs,idx:0,wrong:0};
+  show("lesson"); document.getElementById("nav").hidden=true;
+  renderQ();
+}
+function makeOpts(words,i){
+  const pool=words.map(w=>w[1]).filter((_,j)=>j!==i);
+  shuffle(pool);
+  const opts=[words[i][1],...pool.slice(0,2)];
+  return shuffle(opts);
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function renderQ(){
+  const k=me(); lHeart.textContent=k.hearts;
+  lprog.style.width=(L.idx/L.qs.length*100)+"%";
+  clearFoot();
+  const q=L.qs[L.idx], [en,ko,em]=q.w, body=document.getElementById("qbody");
+  if(q.kind==="read"){
+    body.innerHTML=`<div class="q-kind">듣고 따라 읽어요 👂</div>
+      <div class="wordcard"><div class="emoji">${em}</div><div class="word en">${en}</div><div class="ko">${ko}</div></div>
+      <div class="center"><button class="say" id="sayBtn">🔊 발음 듣기</button></div>`;
+    speak(en);
+    sayBtn.onclick=()=>speak(en);
+    foot(`<button class="btn" id="nextBtn">알았어요!</button>`);
+    nextBtn.onclick=next;
+  }
+  if(q.kind==="listen"){
+    body.innerHTML=`<div class="q-kind">잘 듣고 뜻을 골라요 🎧</div>
+      <div class="wordcard"><div class="emoji">${em}</div><div class="center"><button class="say" id="sayBtn" style="margin-top:14px">🔊 다시 듣기</button></div></div>
+      <div class="choices" id="ch"></div>`;
+    speak(en); sayBtn.onclick=()=>speak(en);
+    const ch=document.getElementById("ch");
+    q.opts.forEach(o=>{
+      const b=document.createElement("button");b.className="choice";b.textContent=o;
+      b.onclick=()=>pickChoice(b,o===ko,en);ch.appendChild(b);
+    });
+  }
+  if(q.kind==="write"){
+    body.innerHTML=`<div class="q-kind">뜻을 보고 영어로 써요 ✏️</div>
+      <div class="wordcard"><div class="emoji">${em}</div><div class="word">${ko}</div>
+        <div class="center"><button class="say" id="sayBtn" style="margin-top:12px">🔊 힌트 듣기</button></div></div>
+      <input class="typebox en" id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="영어로 입력">
+      <div class="hint">${en[0]}${" _".repeat(en.length-1)}</div>`;
+    sayBtn.onclick=()=>speak(en);
+    const inp=document.getElementById("typed"); inp.focus();
+    inp.onkeydown=e=>{if(e.key==="Enter")checkWrite(en)};
+    foot(`<button class="btn" id="okBtn">확인</button>`);
+    okBtn.onclick=()=>checkWrite(en);
+  }
+}
+function pickChoice(btn,correct,en){
+  document.querySelectorAll("#ch .choice").forEach(c=>c.style.pointerEvents="none");
+  if(correct){btn.classList.add("right");result(true,en)}
+  else{btn.classList.add("wrong");document.querySelectorAll("#ch .choice").forEach(c=>{if(c.textContent===L.qs[L.idx].w[1])c.classList.add("right")});result(false,en)}
+}
+function checkWrite(en){
+  const val=(document.getElementById("typed").value||"").trim().toLowerCase();
+  result(val===en.toLowerCase(), en);
+}
+function result(ok,en){
+  const k=me();
+  if(ok){
+    footBar("ok",`👏 정답! <span class="en">${en}</span>`,"계속하기",next);
+    speak(en);
+  }else{
+    k.wrongThis=true; L.wrong++; k.hearts=Math.max(0,k.hearts-1); lHeart.textContent=k.hearts; save();
+    footBar("no",`정답은 <span class="en">${en}</span> 이에요`,"계속하기",()=>{
+      if(k.hearts<=0){alert("하트를 다 썼어요! 내일 또 도전해요 💛");quitLesson()}else next();
+    });
+  }
+}
+function next(){
+  L.idx++;
+  if(L.idx>=L.qs.length)return finishLesson();
+  if(me().hearts<=0)return quitLesson();
+  renderQ();
+}
+function finishLesson(){
+  const k=me(); const key=lessonKey(L.ui,L.li);
+  const stars = L.wrong===0?3 : L.wrong<=2?2:1;
+  const firstTime = !k.done[key];
+  k.done[key]=Math.max(k.done[key]||0,stars);
+  k.xp += firstTime? 20 : 10;
+  k.xp += (3-Math.min(3,L.wrong))*3;
+  // streak
+  if(k.last!==today()){k.streak = (k.last===yesterday())?k.streak+1:1; k.last=today();}
+  k.pets=k.pets||[];
+  const newPet=PETS[Math.random()*PETS.length|0]; k.pets.push(newPet);
+  save();
+  document.getElementById("qbody").innerHTML=`<div class="big-center">
+    <div class="confetti">🎉</div>${mascot(110)}
+    <h1 style="font-size:28px">레슨 완료!</h1>
+    <div style="font-size:30px">${"⭐".repeat(stars)}${"☆".repeat(3-stars)}</div>
+    <p class="unit-sub">+${firstTime?20:10} 포인트 · 연속 ${k.streak}일 🔥</p>
+    <div style="margin-top:14px;background:var(--card);border:2px solid var(--sun);border-radius:18px;padding:16px 22px;box-shadow:var(--shadow)">
+      <div style="font-family:Jua;font-size:15px;color:var(--sun-dk)">🥚 알이 부화했어요!</div>
+      <div style="font-size:50px;line-height:1.2" class="hatch">${newPet}</div>
+      <div style="font-size:12px;color:var(--ink-soft)">보물 도감에 새 친구가 모였어요 (총 ${k.pets.length})</div>
+    </div>
+  </div>`;
+  try{const el=document.querySelector(".hatch");if(el){el.animate([{transform:"scale(.2) rotate(-15deg)",opacity:0},{transform:"scale(1.15)",opacity:1},{transform:"scale(1)"}],{duration:600,easing:"ease-out"})}}catch(e){}
+  lprog.style.width="100%";
+  foot(`<button class="btn" id="doneBtn">좋아요!</button>`);
+  doneBtn.onclick=()=>{go("learn")};
+}
+function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)}
+document.getElementById("quitLesson").onclick=quitLesson;
+function quitLesson(){go("learn")}
+
+/* ---------- footer helpers ---------- */
+function foot(html){document.getElementById("foot").innerHTML=`<div class="footbar">${html}</div>`}
+function footBar(type,msg,btn,fn){
+  document.getElementById("foot").innerHTML=`<div class="footbar ${type}">
+    <div class="footmsg ${type}">${msg}</div><button class="btn ${type==="no"?"coral":""}" id="fBtn">${btn}</button></div>`;
+  document.getElementById("fBtn").onclick=fn;
+}
+function clearFoot(){document.getElementById("foot").innerHTML=""}
+
+/* ---------- Videos ---------- */
+function renderVideos(){
+  vidList.innerHTML=VIDEOS.map(v=>`<a class="vid" href="${vidUrl(v.id)}" target="_blank" rel="noopener">
+    <span class="thumb">${v.e}</span><span><b>${v.t}</b><span>${v.lv} · ${v.s}</span></span><span class="go">▶</span></a>`).join("");
+}
+
+/* ---------- Ranking ---------- */
+function renderRank(){
+  const max=Math.max(1,...DB.kids.map(k=>k.xp));
+  const sorted=[...DB.kids].sort((a,b)=>b.xp-a.xp);
+  const medal=["🥇","🥈","🥉"];
+  rankList.innerHTML=sorted.map((k,i)=>{
+    const doneN=Object.keys(k.done).length;
+    return `<div class="rank ${k.id===DB.current?"me":""}">
+      <span class="medal">${medal[i]||"🏅"}</span>
+      <span class="avatar" style="background:${COLORS[DB.kids.indexOf(k)%COLORS.length]}">${k.emoji}</span>
+      <span><span class="nm">${k.name}</span>
+        <span class="meta">완료 ${doneN}/${totalLessons} · 🔥${k.streak}일</span>
+        <div class="bar"><i style="width:${k.xp/max*100}%"></i></div>
+      </span>
+      <span class="pts">${k.xp}</span>
+    </div>`;
+  }).join("");
+}
+
+/* ---------- Profile ---------- */
+function renderMe(){
+  const k=me();dailyTick(k);
+  const doneN=Object.keys(k.done).length;
+  meBody.innerHTML=`<div class="center" style="margin:10px 0">
+      <span class="avatar" style="width:80px;height:80px;font-size:44px;margin:auto;background:${COLORS[DB.kids.indexOf(k)%COLORS.length]}">${k.emoji}</span>
+      <h2 style="font-size:24px;margin-top:8px">${k.name}</h2>
+      <p class="unit-sub" style="text-align:center">${k.grade||""}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      ${statCard("⭐ 포인트",k.xp)}
+      ${statCard("🔥 연속학습",k.streak+"일")}
+      ${statCard("📚 완료 레슨",doneN+"/"+totalLessons)}
+      ${statCard("❤️ 하트",k.hearts+"/"+MAX_HEART)}
+    </div>
+    <div style="background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-top:14px">
+      <div style="font-family:Jua;font-size:16px;margin-bottom:10px">🥚 보물 도감 <span style="color:var(--ink-soft);font-size:13px">(${(k.pets||[]).length})</span></div>
+      ${(k.pets||[]).length? `<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:26px">${(k.pets||[]).slice().reverse().map(p=>`<span>${p}</span>`).join("")}</div>`
+        : `<p style="font-size:13px;color:var(--ink-soft);margin:0">레슨을 끝내면 알이 부화해 친구가 모여요!</p>`}
+    </div>
+    <div style="background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-top:14px">
+      <div style="font-family:Jua;font-size:16px;margin-bottom:8px">🇬🇧 발음 음성 (영국식)</div>
+      ${voiceSelectorHTML()}
+      <button class="say" id="tryVoice" style="margin:12px 0 0">🔊 발음 미리듣기</button>
+      <p style="font-size:12px;color:var(--ink-soft);margin:10px 0 0;line-height:1.5">
+        가장 자연스러운 영국 발음을 쓰려면 아이폰에 고급 음성을 설치하세요:<br>
+        <b>설정 → 손쉬운 사용 → 음성 콘텐츠 → 음성 → English → United Kingdom</b> 에서
+        <b>Daniel/Kate (향상됨)</b> 또는 <b>Siri 음성</b>을 내려받은 뒤, 위에서 그 음성을 고르면 돼요.
+      </p>
+    </div>
+    <button class="btn ghost" id="editMe" style="margin-top:16px">✏️ 이름·학년·캐릭터 수정</button>`;
+  document.getElementById("editMe").onclick=()=>openModal(me());
+  const sel=document.getElementById("voiceSel");
+  if(sel)sel.onchange=()=>{DB.voice=sel.value;save();speak("Hello! Lovely to meet you.")};
+  document.getElementById("tryVoice").onclick=()=>speak("Hello! It's a lovely day, isn't it?");
+  refreshTop();
+}
+function voiceSelectorHTML(){
+  if(!VOICES.length)loadVoices();
+  if(!VOICES.length) return `<p style="font-size:13px;color:var(--ink-soft);margin:0">🔊 미리듣기를 한 번 누르면 사용 가능한 음성 목록이 나타나요.</p>`;
+  const cur=currentVoice();
+  const opts=VOICES.map(v=>{
+    const gb=v.lang.replace("_","-").toLowerCase().startsWith("en-gb");
+    const label=`${gb?"🇬🇧 ":""}${v.name} (${v.lang})`;
+    return `<option value="${v.name.replace(/"/g,'')}" ${cur&&v.name===cur.name?"selected":""}>${label}</option>`;
+  }).join("");
+  return `<select id="voiceSel" style="width:100%;padding:11px;border:2px solid var(--line);border-radius:12px;background:var(--cream);color:var(--ink);font:inherit;font-size:15px">${opts}</select>`;
+}
+function statCard(t,v){return `<div style="background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)">
+  <div style="font-family:Fredoka;font-weight:700;font-size:26px;color:var(--ink)">${v}</div>
+  <div style="color:var(--ink-soft);font-size:13px;margin-top:2px">${t}</div></div>`}
+
+/* ---------- Profile pick ---------- */
+function renderPick(){
+  document.getElementById("pickMascot").innerHTML=mascot(100);
+  pickList.innerHTML=DB.kids.map(k=>`<button class="pcard" data-id="${k.id}">
+    <span class="avatar" style="background:${COLORS[DB.kids.indexOf(k)%COLORS.length]}">${k.emoji}</span>
+    <span><b>${k.name}</b><span>${k.grade||""} · ⭐${k.xp} · 🔥${k.streak}일</span></span>
+  </button>`).join("");
+  document.querySelectorAll("#pickList .pcard").forEach(b=>b.onclick=()=>{DB.current=b.dataset.id;save();go("learn")});
+}
+document.getElementById("addKid").onclick=()=>openModal();
+document.getElementById("switchKid").onclick=()=>{renderPick();show("pick");document.getElementById("nav").hidden=true}
+document.getElementById("whoBtn").onclick=()=>{renderPick();show("pick");document.getElementById("nav").hidden=true}
+
+/* ---------- Modal (add kid) ---------- */
+let mEmojiSel=EMOJIS[0], editId=null;
+function openModal(kid){
+  editId = kid? kid.id : null;
+  mTitle.textContent = kid? "정보 수정" : "새 친구";
+  mDesc.textContent = kid? "이름·학년·캐릭터를 바꿔요" : "이름과 캐릭터를 골라요";
+  mName.value = kid? kid.name : "";
+  mGrade.value = kid? (kid.grade||"") : "";
+  mEmojiSel = kid? kid.emoji : EMOJIS[0];
+  mEmoji.innerHTML=EMOJIS.map(e=>`<button data-e="${e}" class="${e===mEmojiSel?"sel":""}">${e}</button>`).join("");
+  mEmoji.querySelectorAll("button").forEach(b=>b.onclick=()=>{mEmojiSel=b.dataset.e;mEmoji.querySelectorAll("button").forEach(x=>x.classList.toggle("sel",x===b))});
+  overlay.classList.add("on");
+}
+mCancel.onclick=()=>overlay.classList.remove("on");
+mSave.onclick=()=>{
+  const nm=(mName.value||"").trim(); if(!nm){mName.focus();return}
+  const grade=(mGrade.value||"").trim();
+  if(editId){
+    const k=DB.kids.find(x=>x.id===editId);
+    if(k){k.name=nm;k.grade=grade;k.emoji=mEmojiSel;}
+    save();overlay.classList.remove("on");
+    if(document.getElementById("s-me").classList.contains("on"))renderMe(); else renderPick();
+    refreshTop();
+  }else{
+    DB.kids.push({id:"k"+Date.now(),name:nm,grade:grade,emoji:mEmojiSel,xp:0,hearts:MAX_HEART,heartsDay:today(),streak:0,last:null,done:{}});
+    save();overlay.classList.remove("on");renderPick();
+  }
+};
+overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove("on")};
+
+/* ---------- Boot ---------- */
+if(DB.current && me()){go("learn")} else {renderPick();show("pick");document.getElementById("nav").hidden=true}
+
+/* self-check */
+(function test(){
+  console.assert(totalLessons===UNITS.reduce((a,u)=>a+u.lessons.length,0),"lesson count");
+  console.assert(makeOpts(UNITS[0].lessons[0].words,0).includes(UNITS[0].lessons[0].words[0][1]),"opts include answer");
+})();
+</script>
+<!-- ===== GitHub Pages 전용: Piper 신경망 TTS로 영국 원어민(RP) 발음 =====
+     Claude 아트팩트 안에서는 보안(CSP)으로 동작하지 않고, GitHub Pages 등 일반 호스팅에서만 작동합니다.
+     첫 실행 시 영국 음성 모델(수십 MB)을 내려받아 브라우저에 캐시합니다(이후 오프라인 동작). -->
+<script type="module">
+  import * as tts from 'https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web/+esm';
+
+  const PRIMARY = 'en_GB-cori-high';     // 영국 여성, 또렷 (키즈 적합)
+  const FALLBACK = 'en_GB-alan-medium';  // 영국 남성 RP (대안)
+  let VOICE = PRIMARY, ready = false, tried = false;
+  const audio = new Audio();
+
+  function sysSpeak(text){
+    try{ const u=new SpeechSynthesisUtterance(text); u.lang='en-GB'; u.rate=.9; speechSynthesis.speak(u); }catch(e){}
+  }
+  async function prepare(){
+    if(tried) return; tried = true;
+    banner('영국 발음 준비 중… (첫 실행만 잠시)');
+    for(const v of [PRIMARY, FALLBACK]){
+      try{ await tts.download(v, ()=>{}); VOICE=v; ready=true; break; }catch(e){}
+    }
+    banner(ready ? '' : '');
+  }
+  function banner(msg){
+    let b=document.getElementById('__ttsbar');
+    if(!msg){ if(b)b.remove(); return; }
+    if(!b){ b=document.createElement('div'); b.id='__ttsbar';
+      b.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:99;background:#2E2740;color:#fff;font:13px system-ui;padding:7px 14px;border-radius:999px;opacity:.92';
+      document.body.appendChild(b); }
+    b.textContent=msg;
+  }
+
+  // 앱이 쓰는 speak()를 Piper 버전으로 교체 (준비 전엔 시스템 음성으로 임시 재생)
+  window.speak = async function(text){
+    prepare();
+    if(!ready){ sysSpeak(text); return; }
+    try{
+      const wav = await tts.predict({ text, voiceId: VOICE });
+      try{ audio.pause(); }catch(e){}
+      audio.src = URL.createObjectURL(wav);
+      await audio.play();
+    }catch(e){ sysSpeak(text); }
+  };
+
+  // 첫 사용자 상호작용 때 모델 미리 받기 시작
+  window.addEventListener('pointerdown', prepare, { once:true });
+</script>
+</body>
+</html>
