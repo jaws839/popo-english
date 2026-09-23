@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1FB89B">
 <!-- GitHub Pages에서 cross-origin isolation을 켜 onnxruntime 멀티스레드 WASM(신경망 음성)이 동작하게 함 -->
-<script>window.coi = { coepCredentialless: true };</script>
+<script>window.coi = { coepCredentialless: () => true };</script>
 <script src="coi-serviceworker.min.js"></script>
 <title>포포 잉글리시</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
